@@ -6,14 +6,23 @@
 # ------------------------------------------------------------------------------------
 # @author: Kuznetsov Konstantin, kuznetsov@yandex.ru
 # (C) 2024
-# email kuznetsovkm@yandex.ru
 # ------------------------------------------------------------------------------------
 
+import substance
+import os
+from pathlib import Path
 
+from substance import get_sub_property
 
+sub = input('Введите вещество: ')
+square = input('Введите площадь: ')
+temp = int(input('Введите температуру: '))
 
-# Press the green button in the gutter to run the script.
+path_sub_db = str(Path(os.getcwd())) + '/substance/' # путь к базе данных с веществом.
+
+sub_property = get_sub_property.get_in_db(name_sub=sub, db_path=path_sub_db)
+
+steam_pressure = get_sub_property.calc_steam_pressure(sub_property=sub_property, temperature=temp)
+
 if __name__ == '__main__':
-    print('PyCharm')
-
-
+    print(steam_pressure)
