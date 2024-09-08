@@ -12,7 +12,7 @@ import substance
 import os
 from pathlib import Path
 
-from substance import get_sub_property
+from substance import sub_property
 
 sub = input('Введите вещество: ')
 square = input('Введите площадь: ')
