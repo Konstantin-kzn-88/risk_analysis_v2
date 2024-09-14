@@ -1,2 +1,4 @@
 pip freeze > requirements.txt
 pip install -r requirements.txt
+
+# id, id_equipment, name_equipment_or_pipeline, part_opo, scnario, scnario_value, mass_all, mass_pf, q_10, q_7, q_4, q_1, p_100, p_70, p_28, p_14, p_2, Lf, Df, Rnkpr, Rvsp, LPt, PPt, Q600, Q320, Q220, Q120, St, direct_losses, localization, socio, ecolog, indirect, sum_damage, dead, injured, collective_dead, collective_injured, math_expectation
