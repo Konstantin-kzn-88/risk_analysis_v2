@@ -14,7 +14,7 @@ from pathlib import Path
 
 from substance import sub_property
 from equipment import equipment_property
-from calc import calc_0_0
+from calc import calc_0_0, calc_0_1
 
 path_sub_db = str(Path(os.getcwd())) + '/substance/'  # путь к базе данных с веществом.
 path_equip_db = str(Path(os.getcwd())) + '/equipment/equipment.db'  # путь к базе данных с оборудованием.
@@ -29,6 +29,11 @@ for equipment in equipments:
     if equipment[-1] == 0:  # емк.под давлением
         if equipment[-2] == 0:  # ЛВЖ
             data = calc_0_0.Result(scenario_num, equipment).calculation()
+            for i in data:
+                equipment_property.Equipment_DB(path_equip_db).add_result(i)
+            scenario_num += len(data)
+        elif equipment[-2] == 1:  # ЛВЖ + токси
+            data = calc_0_1.Result(scenario_num, equipment).calculation()
             for i in data:
                 equipment_property.Equipment_DB(path_equip_db).add_result(i)
             scenario_num += len(data) - 1
