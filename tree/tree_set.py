@@ -11,7 +11,7 @@
 class Tree:
     """Класс формирования вероятностей деревьев событий"""
 
-    def __init__(self, sub_type: str, eq_type: str):
+    def __init__(self, sub_type: int, eq_type: int):
         self.sub_type = sub_type
         self.eq_type = eq_type
 
@@ -36,6 +36,11 @@ class Tree:
             }
         }
 
+    def get_tree_set(self):
+        return self.data[self.sub_type][self.eq_type]
+
+if __name__ == '__main__':
+    print(Tree(0,0).get_tree_set())
 
 
 

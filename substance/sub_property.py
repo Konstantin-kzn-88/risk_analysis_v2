@@ -123,7 +123,26 @@ class Work_DB:
         # Сохраняем изменения и закрываем соединение
         self.save_to_db(connection)
         # если ничего не нашли возвращаем модельное вещество
-        return (1, 'model_sub', 851, 0.04, 151, 356001, 1.02, 1202, 1)
+        return (1, 'model_sub', 851, 0.04, 151, 356001, 1.02, 1202, 0)
+
+
+    def find_from_db_whith_id(self, sub_id: str, db_path: str):
+        # Устанавливаем соединение с базой данных
+        connection, cursor = self.connection_to_db(db_path + 'sub.db')
+
+        # Выбираем все вещества
+        cursor.execute('SELECT * FROM Subs')
+        subs = cursor.fetchall()
+
+        # Выводим результаты
+        for sub in subs:
+            if sub[0] == sub_id:
+                connection.close()
+                return sub
+        # Сохраняем изменения и закрываем соединение
+        self.save_to_db(connection)
+        # если ничего не нашли возвращаем модельное вещество
+        return (1, 'model_sub', 851, 0.04, 151, 356001, 1.02, 1202, 0)
 
 
 if __name__ == '__main__':
