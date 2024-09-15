@@ -96,10 +96,10 @@ class Equipment_DB:
         q_7 REAL NOT NULL,        
         q_4 REAL NOT NULL,
         q_1 REAL NOT NULL,
-        p_100 REAL NOT NULL,
-        p_70 REAL NOT NULL,        
-        p_28 REAL NOT NULL,
+        p_70 REAL NOT NULL,
+        p_28 REAL NOT NULL,        
         p_14 REAL NOT NULL,
+        p_5 REAL NOT NULL,
         p_2 REAL NOT NULL,
         Lf REAL NOT NULL,        
         Df REAL NOT NULL,
@@ -238,10 +238,10 @@ class Equipment_DB:
         q_7 REAL NOT NULL,
         q_4 REAL NOT NULL,
         q_1 REAL NOT NULL,
-        p_100 REAL NOT NULL,
         p_70 REAL NOT NULL,
         p_28 REAL NOT NULL,
         p_14 REAL NOT NULL,
+        p_5 REAL NOT NULL,
         p_2 REAL NOT NULL,
         Lf REAL NOT NULL,
         Df REAL NOT NULL,
@@ -340,7 +340,7 @@ class Equipment_DB:
             cursor.execute(
                 'INSERT INTO Equipment_result (id_equipment, name_equipment_or_pipeline, part_opo, scnario, scnario_value,scnario_description, '
                 'mass_all, mass_pf, q_10, q_7, q_4, q_1, '
-                'p_100, p_70, p_28, p_14, p_2, Lf, '
+                'p_70, p_28, p_14, p_5, p_2, Lf, '
                 'Df, Rnkpr, Rvsp, LPt, PPt, Q600, '
                 'Q320, Q220, Q120, St, direct_losses, localization, '
                 'socio, ecolog, indirect, sum_damage, dead, injured, '
