@@ -76,7 +76,7 @@ class Result:
                                                 heat_evaporation_liquid=self.sub[5],
                                                 adiabatic=self.sub[6], heat_capacity_liquid=self.sub[7]).calculation()
 
-        mass_pf = round(PART_TO_EXPLOSION * mass_gas * KG_TO_T, 4)
+        mass_pf = round(PART_TO_EXPLOSION * mass_gas * KG_TO_T, 3)
         scnario_description = 'Полное разрушение→ отсутствие мгновенного воспламенения→возможность образования взрывоопасного облака→ отсроченное воспламенение → взрыв облака ТВС'
         general = [self.equipment[0], self.equipment[1], self.equipment[7], scenario, scnario_value,
                    scnario_description,
@@ -319,6 +319,7 @@ class Result:
         data_8 = general + spill_fire + explosion + jet_fire + flash_fire + toxi + ball_fire + spill_toxi + damage + man + coll_risk + math_risk
 
         # 3. Полное разрушение - Огненный шар
+        self.scenario_num += 1
         mass_all = self.equipment[2] * self.equipment[3] * self.sub[
             2] * KG_TO_T  # объем*ст.заполнения*плотность вещества
         # 1.1. Расчет пожара пролива (полное)

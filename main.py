@@ -36,11 +36,12 @@ for equipment in equipments:
             for i in data:
                 equipment_property.Equipment_DB(path_equip_db).add_result(i)
             scenario_num += len(data)
-        # elif sub[-1] == 1:  # ЛВЖ + токси
-        #     data = calc_0_1.Result(scenario_num, equipment, sub).calculation()
-        #     for i in data:
-        #         equipment_property.Equipment_DB(path_equip_db).add_result(i)
-        #     scenario_num += len(data)
+        elif sub[-1] == 1:  # ЛВЖ+токси
+            tree = tree_set.Tree(sub[-1], equipment[-1]).get_tree_set()
+            data = calc_0_1.Result(scenario_num, equipment, sub, tree).calculation()
+            for i in data:
+                equipment_property.Equipment_DB(path_equip_db).add_result(i)
+            scenario_num += len(data)
 
 if __name__ == '__main__':
     print(equipments)
