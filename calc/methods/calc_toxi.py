@@ -21,9 +21,11 @@ class Toxi:
         """
 
         LD = round(0.0088 * spill_square + 0.8056, 1)
-        PD = round((-1e-12) * math.pow(spill_square, 5) + (3e-09) * math.pow(spill_square, 4) - \
-                   (3e-06) * math.pow(spill_square, 3) + \
-                   0.0012 * math.pow(spill_square, 2) - 0.1529 * spill_square + 16.167, 1)
+
+        PD = (5e-09)* math.pow(spill_square, 3) - (3e-05)* math.pow(spill_square, 2) + 0.0808* spill_square - 0.1014
+        # PD = round((-1e-12) * math.pow(spill_square, 5) + (3e-09) * math.pow(spill_square, 4) - \
+        #            (3e-06) * math.pow(spill_square, 3) + \
+        #            0.0012 * math.pow(spill_square, 2) - 0.1529 * spill_square + 16.167, 1)
 
         return (LD, PD)
 
@@ -40,4 +42,4 @@ class Toxi:
 
 
 if __name__ == '__main__':
-    print(Toxi().LD_PD(0.2*20))
+    print(Toxi().LD_PD(10000))
