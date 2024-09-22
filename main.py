@@ -15,6 +15,7 @@ from pathlib import Path
 from substance import sub_property
 from equipment import equipment_property
 from calc import calc_0_0, calc_0_1
+from calc import calc_1_0
 from tree import tree_set
 
 path_sub_db = str(Path(os.getcwd())) + '/substance/'  # путь к базе данных с веществом.
@@ -29,6 +30,7 @@ equipment_property.Equipment_DB(path_equip_db).clear_equipment_result()
 # Для каждого оборудования проведем расчет и результат запишем в Equipment_table
 for equipment in equipments:
     sub = sub_property.Work_DB().find_from_db_whith_id(equipment[-2], path_sub_db)
+
     if equipment[-1] == 0:  # емк.под давлением
         if sub[-1] == 0:  # ЛВЖ
             tree = tree_set.Tree(sub[-1], equipment[-1]).get_tree_set()
@@ -39,6 +41,14 @@ for equipment in equipments:
         elif sub[-1] == 1:  # ЛВЖ+токси
             tree = tree_set.Tree(sub[-1], equipment[-1]).get_tree_set()
             data = calc_0_1.Result(scenario_num, equipment, sub, tree).calculation()
+            for i in data:
+                equipment_property.Equipment_DB(path_equip_db).add_result(i)
+            scenario_num += len(data)
+
+    elif equipment[-1] == 1:  # РВС
+        if sub[-1] == 0:  # ЛВЖ
+            tree = tree_set.Tree(sub[-1], equipment[-1]).get_tree_set()
+            data = calc_1_0.Result(scenario_num, equipment, sub, tree).calculation()
             for i in data:
                 equipment_property.Equipment_DB(path_equip_db).add_result(i)
             scenario_num += len(data)
