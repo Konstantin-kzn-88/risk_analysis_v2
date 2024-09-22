@@ -16,7 +16,7 @@ from substance import sub_property
 from equipment import equipment_property
 from calc import calc_0_0, calc_0_1
 from calc import calc_1_0, calc_1_1
-from calc import calc_2_0#, calc_1_1
+from calc import calc_2_0, calc_2_1
 from tree import tree_set
 
 path_sub_db = str(Path(os.getcwd())) + '/substance/'  # путь к базе данных с веществом.
@@ -61,7 +61,6 @@ for equipment in equipments:
                 equipment_property.Equipment_DB(path_equip_db).add_result(i)
             scenario_num += len(data)
 
-
     if equipment[-1] == 2:  # насос
         if sub[-1] == 0:  # ЛВЖ
             tree = tree_set.Tree(sub[-1], equipment[-1]).get_tree_set()
@@ -69,6 +68,14 @@ for equipment in equipments:
             for i in data:
                 equipment_property.Equipment_DB(path_equip_db).add_result(i)
             scenario_num += len(data)
+
+        elif sub[-1] == 1:  # ЛВЖ+токси
+            tree = tree_set.Tree(sub[-1], equipment[-1]).get_tree_set()
+            data = calc_2_1.Result(scenario_num, equipment, sub, tree).calculation()
+            for i in data:
+                equipment_property.Equipment_DB(path_equip_db).add_result(i)
+            scenario_num += len(data)
+
 
 if __name__ == '__main__':
     print(equipments)
