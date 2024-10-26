@@ -136,8 +136,6 @@ class Evaporation:
         # print('6. Давление насыщенного пара при расчетной температуре, кПа:')
         steam_pressure = P_ATM * math.exp((self.heat_evaporation_liquid * self.molecular_weight / R) * (
                 (1 / (self.boiling_temperature_liquid + C_TO_K)) - (1 / (self.temperature_equipment + C_TO_K))))
-
-
         # print('7. Масса испарившегося в-ва от теплопритока поверхности, кг и время кипения, с:')
 
         if TEMPERATURE_SURFACE > self.boiling_temperature_liquid:

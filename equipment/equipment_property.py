@@ -210,6 +210,14 @@ class Equipment_DB:
         equips = cursor.fetchall()
         return equips
 
+    def get_all_equipment_pipeline_table(self):
+        # Устанавливаем соединение с базой данных
+        connection, cursor = self.connection_to_db()
+        # Выбираем все
+        cursor.execute('SELECT * FROM Equipment_pipeline')
+        pipelines = cursor.fetchall()
+        return pipelines
+
     # def get_fieldnames(self):
     #     # Получить наименование полей
     #     # Устанавливаем соединение с базой данных
@@ -221,50 +229,23 @@ class Equipment_DB:
     def table(self):
         # Устанавливаем соединение с базой данных
         connection, cursor = self.connection_to_db()
-        cursor.execute('DROP TABLE if exists Equipment_result')
-        # Создаем таблицу Equipment_result
+        cursor.execute('DROP TABLE if exists Equipment_pipeline')
+        # Создаем таблицу Equipment_pipeline
         cursor.execute('''
-        CREATE TABLE IF NOT EXISTS Equipment_result (
+        CREATE TABLE IF NOT EXISTS Equipment_pipeline (
         id INTEGER PRIMARY KEY,
-        id_equipment INTEGER NOT NULL,
-        name_equipment_or_pipeline TEXT NOT NULL,
+        eq_name TEXT NOT NULL,
+        lenght_pipeline REAL NOT NULL,
+        diameter_pipeline REAL NOT NULL,        
+        pressure_equipment REAL NOT NULL,
+        temperature_equipment INTEGER NOT NULL,
+        time_off INTEGER NOT NULL,
+        part_lenght_pipeline REAL NOT NULL,
         part_opo TEXT NOT NULL,
-        scnario TEXT NOT NULL,
-        scnario_value REAL NOT NULL,
-        scnario_description TEXT NOT NULL,
-        mass_all REAL NOT NULL,
-        mass_pf REAL NOT NULL,
-        q_10 REAL NOT NULL,
-        q_7 REAL NOT NULL,
-        q_4 REAL NOT NULL,
-        q_1 REAL NOT NULL,
-        p_70 REAL NOT NULL,
-        p_28 REAL NOT NULL,
-        p_14 REAL NOT NULL,
-        p_5 REAL NOT NULL,
-        p_2 REAL NOT NULL,
-        Lf REAL NOT NULL,
-        Df REAL NOT NULL,
-        Rnkpr REAL NOT NULL,
-        Rvsp REAL NOT NULL,
-        LPt REAL NOT NULL,
-        PPt REAL NOT NULL,
-        Q600 REAL NOT NULL,
-        Q320 REAL NOT NULL,
-        Q220 REAL NOT NULL,
-        Q120 REAL NOT NULL,
-        St REAL NOT NULL,
-        direct_losses INTEGER NOT NULL,
-        localization INTEGER NOT NULL,
-        socio INTEGER NOT NULL,
-        ecolog INTEGER NOT NULL,
-        indirect INTEGER NOT NULL,
-        sum_damage INTEGER NOT NULL,
-        dead INTEGER NOT NULL,
-        injured INTEGER NOT NULL,
-        collective_dead REAL NOT NULL,
-        collective_injured REAL NOT NULL,
-        math_expectation REAL NOT NULL)
+        dead_people_max INTEGER NOT NULL,
+        inj_people_max INTEGER NOT NULL,
+        sub_id INTEGER NOT NULL,
+        eq_type INTEGER NOT NULL)
         ''')
         # Сохраняем изменения и закрываем соединение
         connection.commit()
@@ -277,7 +258,7 @@ class Equipment_DB:
             connection, cursor = self.connection_to_db()
             # Добавляем оборудование
             cursor.execute(
-                'INSERT INTO Equipment_pipeline (eq_name, lenght_pipeline, diameter_pipeline, pressure_equipment, temperature_equipment, part_opo, dead_people_max, inj_people_max, sub_id, eq_type) VALUES (?,?,?,?,?,?,?,?,?,?)',
+                'INSERT INTO Equipment_pipeline (eq_name, lenght_pipeline, diameter_pipeline, pressure_equipment, temperature_equipment, time_off, part_lenght_pipeline, part_opo, dead_people_max, inj_people_max, sub_id, eq_type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
                 pipeline)
             # Сохраняем изменения и закрываем соединение
             self.save_to_db(connection)
@@ -306,7 +287,7 @@ class Equipment_DB:
             update_eqp.pop(0)
             update_eqp.append(eqp_with_id[0])
             cursor.execute(
-                'UPDATE Equipment_pipeline SET eq_name= ?, lenght_pipeline= ?, diameter_pipeline= ?, pressure_equipment= ?, temperature_equipment= ?, part_opo= ?, dead_people_max= ?, inj_people_max= ?, sub_id= ?, eq_type= ? WHERE id = ?',
+                'UPDATE Equipment_pipeline SET eq_name= ?, lenght_pipeline= ?, diameter_pipeline= ?, pressure_equipment= ?, temperature_equipment= ?, , time_off= ?, part_lenght_pipeline= ?, part_opo= ?, dead_people_max= ?, inj_people_max= ?, sub_id= ?, eq_type= ? WHERE id = ?',
                 update_eqp)
             # Сохраняем изменения и закрываем соединение
             self.save_to_db(connection)
@@ -371,43 +352,4 @@ class Equipment_DB:
 
 
 if __name__ == '__main__':
-    # pass
-    # os.remove('equipment.db')
-    # Equipment_DB('equipment.db').create_db()
-    # Equipment_DB('equipment.db').create_table()
-    # print(
-    #     Equipment_DB('equipment.db').add_in_Equipment_table(('НГС', 25, 0.8, 250, 0.3, 45, 'Площадка НГС', 2, 3, 0, 0)))
-    # print(
-    #     Equipment_DB('equipment.db').add_in_Equipment_table(('РВС', 20, 0.5, 220, 0.4, 35, 'Площадка НГС', 2, 3, 1, 0)))
-    # print(
-    #     Equipment_DB('equipment.db').add_in_Equipment_table(
-    #         ('НГС-3', 10, 0.2, 260, 0.7, 65, 'Площадка НГС', 2, 3, 2, 0)))
-    # print(Equipment_DB('equipment.db').add_in_Equipment_table(
-    #     ('НГС', 25, 0.8, 250, 0.3, 45, 'Площадка НГС2', 2, 3, 0, 0)))
-    # print(
-    #     Equipment_DB('equipment.db').add_in_Equipment_table(
-    #         ('НГС-2', 20, 0.5, 220, 0.4, 35, 'Площадка НГС2', 2, 3, 1, 0)))
-    # print(
-    #     Equipment_DB('equipment.db').add_in_Equipment_table(
-    #         ('НГС-3', 10, 0.2, 260, 0.7, 65, 'Площадка НГС2', 2, 3, 2, 0)))
-    # print(Equipment_DB('equipment.db').del_in_Equipment_table(id=2))
-    # print(Equipment_DB('equipment.db').update_in_Equipment_table(
-    #     (6, 'НГС-35', 17, 0.05, 261, 0.73, 61, 'Площадка НГС33', 2, 3, 3, 0)))
-    # print(Equipment_DB('equipment.db').find_from_Equipment_table(5))
-    # #
-    # print(
-    #     Equipment_DB('equipment.db').add_in_Equipment_pipeline(('т.1', 0.95, 114, 0.3, 45, 'Система НГС', 2, 3, 0, 10)))
-    # print(Equipment_DB('equipment.db').add_in_Equipment_pipeline(('т.2', 0.96, 114, 0.5, 45, 'Система ГС', 2, 3, 1, 10)))
-    # print(
-    #     Equipment_DB('equipment.db').add_in_Equipment_pipeline(('т.3', 0.97, 114, 0.7, 47, 'Система НГС', 2, 3, 1, 10)))
-    # print(
-    #     Equipment_DB('equipment.db').add_in_Equipment_pipeline(('т.1', 0.95, 114, 0.3, 45, 'Система НГС2', 2, 3, 0, 10)))
-    # print(
-    #     Equipment_DB('equipment.db').add_in_Equipment_pipeline(('т.2', 0.96, 114, 0.5, 45, 'Система НГС2', 2, 3, 1, 10)))
-    # print(
-    #     Equipment_DB('equipment.db').add_in_Equipment_pipeline(('т.3', 0.97, 114, 0.7, 47, 'Система НГС2', 2, 3, 1, 10)))
-    # print(Equipment_DB('equipment.db').del_in_Equipment_pipeline(id=5))
-    # print(Equipment_DB('equipment.db').update_in_Equipment_pipeline(
-    #     (9, 'т.15', 0.90, 115, 0.8, 47, 'Система НГС36', 2, 3, 13, 11)))
-    # print(Equipment_DB('equipment.db').find_from_Equipment_pipeline(6))
     print(Equipment_DB('equipment.db').table())

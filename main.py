@@ -19,17 +19,23 @@ from calc import calc_1_0, calc_1_1
 from calc import calc_2_0, calc_2_1
 from calc import calc_3_0, calc_3_1
 from calc import calc_4_0, calc_4_1
+from calc import calc_10_0, calc_10_1
 from tree import tree_set
 
 path_sub_db = str(Path(os.getcwd())) + '/substance/'  # путь к базе данных с веществом.
 path_equip_db = str(Path(os.getcwd())) + '/equipment/equipment.db'  # путь к базе данных с оборудованием.
 
-equipments = equipment_property.Equipment_DB(path_equip_db).get_all_equipment_table()
+
 
 scenario_num = 1
 
+# Получим перечень оборудования
+equipments = equipment_property.Equipment_DB(path_equip_db).get_all_equipment_table()
+# Получим перечень трубопроводов
+pipelines = equipment_property.Equipment_DB(path_equip_db).get_all_equipment_pipeline_table()
 # Очистить таблицу с результатами расчета
 equipment_property.Equipment_DB(path_equip_db).clear_equipment_result()
+
 # Для каждого оборудования проведем расчет и результат запишем в Equipment_table
 for equipment in equipments:
     sub = sub_property.Work_DB().find_from_db_whith_id(equipment[-2], path_sub_db)
@@ -92,16 +98,36 @@ for equipment in equipments:
     #             equipment_property.Equipment_DB(path_equip_db).add_result(i)
     #         scenario_num += len(data)
 
-    if equipment[-1] == 4:  # цистерны elif
+    # if equipment[-1] == 4:  # цистерны elif
+    #     if sub[-1] == 0:  # ЛВЖ
+    #         tree = tree_set.Tree(sub[-1], equipment[-1]).get_tree_set()
+    #         data = calc_4_0.Result(scenario_num, equipment, sub, tree).calculation()
+    #         for i in data:
+    #             equipment_property.Equipment_DB(path_equip_db).add_result(i)
+    #         scenario_num += len(data)
+    #     elif sub[-1] == 1:  # ЛВЖ+токси
+    #         tree = tree_set.Tree(sub[-1], equipment[-1]).get_tree_set()
+    #         data = calc_4_1.Result(scenario_num, equipment, sub, tree).calculation()
+    #         for i in data:
+    #             equipment_property.Equipment_DB(path_equip_db).add_result(i)
+    #         scenario_num += len(data)
+    pass
+
+
+# Для каждого трубопровода проведем расчет и результат запишем в Equipment_pipeline_table
+for pipeline in pipelines:
+    sub = sub_property.Work_DB().find_from_db_whith_id(pipeline[-2], path_sub_db)
+
+    if pipeline[-1] == 10:  # трубопровод
         if sub[-1] == 0:  # ЛВЖ
-            tree = tree_set.Tree(sub[-1], equipment[-1]).get_tree_set()
-            data = calc_4_0.Result(scenario_num, equipment, sub, tree).calculation()
+            tree = tree_set.Tree(sub[-1], pipeline[-1]).get_tree_set()
+            data = calc_10_0.Result(scenario_num, pipeline, sub, tree).calculation()
             for i in data:
                 equipment_property.Equipment_DB(path_equip_db).add_result(i)
             scenario_num += len(data)
         elif sub[-1] == 1:  # ЛВЖ+токси
-            tree = tree_set.Tree(sub[-1], equipment[-1]).get_tree_set()
-            data = calc_4_1.Result(scenario_num, equipment, sub, tree).calculation()
+            tree = tree_set.Tree(sub[-1], pipeline[-1]).get_tree_set()
+            data = calc_10_1.Result(scenario_num, pipeline, sub, tree).calculation()
             for i in data:
                 equipment_property.Equipment_DB(path_equip_db).add_result(i)
             scenario_num += len(data)
