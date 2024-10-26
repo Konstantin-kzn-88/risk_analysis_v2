@@ -20,6 +20,7 @@ from calc import calc_2_0, calc_2_1
 from calc import calc_3_0, calc_3_1
 from calc import calc_4_0, calc_4_1
 from calc import calc_10_0, calc_10_1
+from chart import fn_fg
 from tree import tree_set
 
 path_sub_db = str(Path(os.getcwd())) + '/substance/'  # путь к базе данных с веществом.
@@ -132,6 +133,11 @@ for pipeline in pipelines:
                 equipment_property.Equipment_DB(path_equip_db).add_result(i)
             scenario_num += len(data)
 
+# Получим перечень трубопроводов
+res = equipment_property.Equipment_DB(path_equip_db).get_equipment_result_table()
+_ = fn_fg.FN_FG_chart(res).fn_chart()
+_ = fn_fg.FN_FG_chart(res).fg_chart()
 
 if __name__ == '__main__':
-    print(equipments)
+    pass
+    # print(equipments)

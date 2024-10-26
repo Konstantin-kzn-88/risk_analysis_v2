@@ -218,6 +218,15 @@ class Equipment_DB:
         pipelines = cursor.fetchall()
         return pipelines
 
+    def get_equipment_result_table(self):
+        # Устанавливаем соединение с базой данных
+        connection, cursor = self.connection_to_db()
+        # Выбираем все
+        cursor.execute('SELECT * FROM Equipment_result')
+        result = cursor.fetchall()
+        return result
+
+
     # def get_fieldnames(self):
     #     # Получить наименование полей
     #     # Устанавливаем соединение с базой данных
