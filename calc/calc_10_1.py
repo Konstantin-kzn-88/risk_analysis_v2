@@ -63,8 +63,8 @@ class Result:
     def calculation(self):
         # 1. Полное разрушение
         _volume_pipe = self._volume_pipe(self.pipeline[3], self.pipeline[2])
-        _part_volume = self.pipeline[9]
-        _time_off = self.pipeline[9]
+        _part_volume = self.pipeline[7]
+        _time_off = self.pipeline[6]
         _flow = self._flow_in_pipe(self.pipeline[3], self.pipeline[4])
 
         mass_all = (_volume_pipe * self.sub[2] + _time_off * _flow) * KG_TO_T  # объем*плотность вещества+расход*время
