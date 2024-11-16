@@ -2,10 +2,12 @@ from .methods import calc_damage
 from .methods import calc_tvs_explosion
 from .methods import calc_lower_concentration
 from .methods import calc_jet_fire
+from .methods import calc_toxi
 import math
 
 KG_TO_T = 0.001
 KM_TO_M = 1000
+T_TO_KG = 1000
 MM_TO_M = 0.001
 MOLE_TO_KMOLE = 1000
 PART_TO_EXPLOSION = 0.1
@@ -174,31 +176,30 @@ class Result:
         math_risk = list((scnario_value * result_damage[-1],))  # результат мат.риска
         data_3 = general + spill_fire + explosion + jet_fire + flash_fire + toxi + ball_fire + spill_toxi + damage + man + coll_risk + math_risk
 
-        # 1.4. Ликвидация (полное)
+        # 1.4. Токси (полное)
         self.scenario_num += 1
         scenario = 'C' + str(self.scenario_num)
         scnario_value = self.tree[3] * self._select_probability_pipe(self.pipeline[3], self.pipeline[2])[-2]
-        mass_pf = 0  # т.к. нет поражающего фактора
-        mass_gas = mass_all
-        scnario_description = 'Разрыв трубопровода на сечение→ отсутствие мгновенного воспламенения→возможность образования взрывоопасного облака→отсуствие отсроченного воспламенения → ликвидация аварии'
+        mass_pf = mass_all  # т.к. токси
+        scnario_description = 'Разрыв трубопровода на сечение→ отсутствие мгновенного воспламенения→возможность образования взрывоопасного облака→отсуствие отсроченного воспламенения → токсическое поражение'
         general = [self.pipeline[0], self.pipeline[1], self.pipeline[10], scenario, scnario_value,
                    scnario_description,
-                   round(mass_all,4), round(mass_pf,4)]
+                   round(mass_pf,4), round(mass_pf,4)]
         spill_fire = list((0, 0, 0, 0))  # результат расчета пожара
         explosion = list((0, 0, 0, 0, 0))  # результат расчета взрыва
         jet_fire = list((0, 0))  # результат расчета факела
         flash_fire = list((0, 0))  # результат расчета вспышки
-        toxi = list((0, 0))  # результат расчета токси
+        toxi = list(calc_toxi.Toxi().LD_PD_gas(mass_gas=mass_pf*T_TO_KG))  # результат расчета токси
         ball_fire = list((0, 0, 0, 0))  # результат расчета шара
         spill_toxi = list((0,))  # результат расчета токс.пролива
 
         dead_man = 0  # т.к. нет поражающего фактора
-        injured_man = 0  # т.к. нет поражающего фактора
+        injured_man = 1  # т.к. нет поражающего фактора
 
         result_damage = calc_damage.Damage(dead_man=dead_man, injured_man=injured_man,
                                            volume_equipment=0, diametr_pipe=self.pipeline[3],
                                            lenght_pipe=self.pipeline[2],
-                                           degree_damage=0.5, m_out_spill=mass_gas * KG_TO_T, m_in_spill=0,
+                                           degree_damage=0.5, m_out_spill=mass_pf * KG_TO_T, m_in_spill=0,
                                            S_spill=mass_all ).sum_damage()
         damage = list(result_damage)  # результат расчета ущерба
         man = list((dead_man, injured_man))  # результат расчета погибших/пострадавших
@@ -315,19 +316,20 @@ class Result:
         math_risk = list((scnario_value * result_damage[-1],))  # результат мат.риска
         data_7 = general + spill_fire + explosion + jet_fire + flash_fire + toxi + ball_fire + spill_toxi + damage + man + coll_risk + math_risk
 
-        # 2.4. Ликвидация (частичная)
+        # 2.4. Токси (частичная)
         self.scenario_num += 1
         scenario = 'C' + str(self.scenario_num)
         scnario_value = self.tree[7] * self._select_probability_pipe(self.pipeline[3], self.pipeline[2])[-1]
-        mass_pf = 0
-        scnario_description = 'Частичная разгерметизация трубопровода→ отсутствие мгновенного воспламенения→возможность образования взрывоопасного облака→отсуствие отсроченного воспламенения → ликвидация аварии'
+        mass_gas = mass_all * PART_NOFULL_DAMAGE
+        mass_pf = round(mass_gas, 4)
+        scnario_description = 'Частичная разгерметизация трубопровода→ отсутствие мгновенного воспламенения→возможность образования взрывоопасного облака→отсуствие отсроченного воспламенения → токсическое поражение'
         general = [self.pipeline[0], self.pipeline[1], self.pipeline[10], scenario, scnario_value,
                    scnario_description, round(mass_all*PART_NOFULL_DAMAGE,4), round(mass_pf,4)]
         spill_fire = list((0, 0, 0, 0))  # результат расчета пожара
         explosion = list((0, 0, 0, 0, 0))  # результат расчета взрыва
         jet_fire = list((0, 0))  # результат расчета факела
         flash_fire = list((0, 0))  # результат расчета вспышки
-        toxi = list((0, 0))  # результат расчета токси
+        toxi = list(calc_toxi.Toxi().LD_PD_gas(mass_gas=mass_pf*T_TO_KG))  # результат расчета токси
         ball_fire = list((0, 0, 0, 0))  # результат расчета шара
         spill_toxi = list((0,))  # результат расчета токс.пролива
 

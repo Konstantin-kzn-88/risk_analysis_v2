@@ -23,23 +23,27 @@ class Toxi:
         LD = round(0.0088 * spill_square + 0.8056, 1)
 
         PD = (5e-09)* math.pow(spill_square, 3) - (3e-05)* math.pow(spill_square, 2) + 0.0808* spill_square - 0.1014
-        # PD = round((-1e-12) * math.pow(spill_square, 5) + (3e-09) * math.pow(spill_square, 4) - \
-        #            (3e-06) * math.pow(spill_square, 3) + \
-        #            0.0012 * math.pow(spill_square, 2) - 0.1529 * spill_square + 16.167, 1)
 
         return (LD, PD)
 
 
-# 100	2	10
-# 200	3	14
-# 300	3	21
-# 400	4	26
-# 500	5	32
-# 600	6	37
-# 700	7	43
-# 800	8	51
-# 900	9	55
+    def LD_PD_gas(self, mass_gas: float) -> tuple:
+        """
+        Расчет зон токсического поражения
 
+        Parametrs:
+        :@param spill_square площадь, м2;
+
+        Return:
+        :@return tuple(LD, PD)
+        """
+        if mass_gas < 20: mass_gas = 20
+
+        LD = round(9.5409*math.log(mass_gas) - 23.086, 1)
+
+        PD = round(79.485*math.log(mass_gas) - 226.21, 1)
+
+        return (LD, PD)
 
 if __name__ == '__main__':
     print(Toxi().LD_PD(10000))

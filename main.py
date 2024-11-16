@@ -20,7 +20,7 @@ from calc import calc_2_0, calc_2_1
 from calc import calc_3_0, calc_3_1
 from calc import calc_4_0, calc_4_1
 from calc import calc_10_0, calc_10_1
-from calc import calc_11_5
+from calc import calc_11_5, calc_11_6
 from chart import fn_fg
 from tree import tree_set
 
@@ -137,6 +137,12 @@ for pipeline in pipelines:
         if sub[-1] == 5:  # ГГ
             tree = tree_set.Tree(sub[-1], pipeline[-1]).get_tree_set()
             data = calc_11_5.Result(scenario_num, pipeline, sub, tree).calculation()
+            for i in data:
+                equipment_property.Equipment_DB(path_equip_db).add_result(i)
+            scenario_num += len(data)
+        elif sub[-1] == 6:  # ГГ+токси
+            tree = tree_set.Tree(sub[-1], pipeline[-1]).get_tree_set()
+            data = calc_11_6.Result(scenario_num, pipeline, sub, tree).calculation()
             for i in data:
                 equipment_property.Equipment_DB(path_equip_db).add_result(i)
             scenario_num += len(data)
