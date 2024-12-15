@@ -3,10 +3,6 @@ import numpy as np
 
 
 class FN_FG_chart:
-    '''
-    Класс построения F/N  и  F/G диаграмм.
-    '''
-
     def __init__(self, data_in_db):
         self.data_in_db = data_in_db
 
@@ -14,8 +10,8 @@ class FN_FG_chart:
         data_fn = []
         data_fg = []
         for i in self.data_in_db:
-            data_fn.append([i[5], i[35]])
-            data_fg.append([i[5], i[34]])
+            data_fn.append([i[0], i[1]])  # Вероятность и число пострадавших
+            data_fg.append([i[0], i[2]])  # Вероятность и материальный ущерб
         return (data_fn, data_fg)
 
     def _sum_data_for_fn(self, data: list):
@@ -32,7 +28,8 @@ class FN_FG_chart:
                 if item_data[1] >= item_uniq:
                     result[item_uniq] = result[item_uniq] + item_data[0]
 
-        del result[0]  # удалить суммарную вероятность где пострадало 0 человек
+        if 0 in result:
+            del result[0]  # удалить суммарную вероятность где пострадало 0 человек
         return result
 
     def _sum_data_for_fg(self, data: list):
@@ -41,8 +38,7 @@ class FN_FG_chart:
         :param data: данные вида [[3.8e-08, 1.2],[5.8e-08, 0.2],[1.1e-08, 12.4]..]
         :return: данные вида: {0.2: 0.00018, 1: 0.012, 3: 6.9008e-06, 5: 3.8e-08, 6.25: 7.29e-05}
         '''
-        uniq = np.arange(0, max([i[1] for i in data])+max([i[1] for i in data]) / 7, max([i[1] for i in data]) / 7)
-
+        uniq = np.arange(0, max([i[1] for i in data]) + max([i[1] for i in data]) / 7, max([i[1] for i in data]) / 7)
         result = dict(zip(uniq, [0] * len(uniq)))
 
         for item_data in data:
@@ -50,13 +46,69 @@ class FN_FG_chart:
                 if item_data[1] >= item_uniq:
                     result[item_uniq] = result[item_uniq] + item_data[0]
 
-        del result[0]  # удалить суммарную вероятность где ущерб 0
+        if 0 in result:
+            del result[0]  # удалить суммарную вероятность где ущерб 0
         return result
+
+    def _add_fn_criteria(self, ax, n_max):
+        """Добавление критериев приемлемости для FN диаграммы с цветовыми зонами"""
+        n_values = np.logspace(0, np.log10(n_max), 100)
+
+        # Верхняя и нижняя границы
+        f_upper = 1e-3 * n_values ** (-1)
+        f_lower = 1e-5 * n_values ** (-1)
+
+        # Создание цветовых зон
+        # Недопустимая зона (красная)
+        ax.fill_between(n_values, f_upper, 1,
+                        color='red', alpha=0.1,
+                        label='Недопустимый риск')
+
+        # Переходная зона ALARP (желтая)
+        ax.fill_between(n_values, f_lower, f_upper,
+                        color='yellow', alpha=0.1,
+                        label='Переходная зона (ALARP)')
+
+        # Приемлемая зона (зеленая)
+        ax.fill_between(n_values, 1e-7, f_lower,
+                        color='green', alpha=0.1,
+                        label='Приемлемый риск')
+
+        # Границы
+        ax.loglog(n_values, f_upper, 'r--', label='Граница недопустимого риска')
+        ax.loglog(n_values, f_lower, 'g--', label='Граница приемлемого риска')
+
+    def _add_fg_criteria(self, ax, g_max):
+        """Добавление критериев приемлемости для FG диаграммы с цветовыми зонами"""
+        g_values = np.logspace(0, np.log10(g_max), 100)
+
+        # Верхняя и нижняя границы
+        f_upper = 1e-3 * g_values ** (-1)
+        f_lower = 1e-5 * g_values ** (-1)
+
+        # Создание цветовых зон
+        # Недопустимая зона (красная)
+        ax.fill_between(g_values, f_upper, 1,
+                        color='red', alpha=0.1,
+                        label='Недопустимый риск')
+
+        # Переходная зона ALARP (желтая)
+        ax.fill_between(g_values, f_lower, f_upper,
+                        color='yellow', alpha=0.1,
+                        label='Переходная зона (ALARP)')
+
+        # Приемлемая зона (зеленая)
+        ax.fill_between(g_values, 1e-7, f_lower,
+                        color='green', alpha=0.1,
+                        label='Приемлемый риск')
+
+        # Границы
+        ax.loglog(g_values, f_upper, 'r--', label='Граница недопустимого риска')
+        ax.loglog(g_values, f_lower, 'g--', label='Граница приемлемого риска')
 
     def fn_chart(self):
         """
-        Построение FN диаграммы
-        :return:
+        Построение FN диаграммы с критериями приемлемости
         """
         # получим данные с листа для построения диаграммы
         data = self._return_data_for_chart()[0]
@@ -65,12 +117,14 @@ class FN_FG_chart:
         else:
             sum_data = self._sum_data_for_fn(data)
             people, probability = list(sum_data.keys()), list(sum_data.values())
+
             # для сплошных линий
             chart_line_x = []
             chart_line_y = []
             for i in people:
                 chart_line_x.extend([i - 1, i, i, i])
                 chart_line_y.extend([probability[people.index(i)], probability[people.index(i)], None, None])
+
             # для пунктирных линий
             chart_dot_line_x = []
             chart_dot_line_y = []
@@ -82,24 +136,32 @@ class FN_FG_chart:
                 chart_dot_line_x.extend([i, i])
                 chart_dot_line_y.extend([probability[people.index(i)], probability[people.index(i) + 1]])
 
-            # Отрисовка графика
-            # fig = plt.figure()
-            plt.semilogy(chart_line_x, chart_line_y, color='b', linestyle='-', marker='.')
-            plt.semilogy(chart_dot_line_x, chart_dot_line_y, color='b', linestyle='--', marker='.')
-            plt.xticks(ticks=people)
-            plt.title('F/N - диаграмма')
-            plt.xlabel('Количество погибших, чел')
-            plt.ylabel('Вероятность, 1/год')
-            plt.subplots_adjust(bottom=0.15, left=0.15)  # Добавляем пространство снизу и слева
-            plt.grid(True)
+            # Создание графика
+            fig, ax = plt.subplots(figsize=(10, 8))
 
-            # plt.show(bbox_inches='tight')
-            plt.savefig(f'fn.jpg')
+            # Построение основной диаграммы
+            ax.semilogy(chart_line_x, chart_line_y, color='b', linestyle='-', marker='.')
+            ax.semilogy(chart_dot_line_x, chart_dot_line_y, color='b', linestyle='--', marker='.')
+            ax.set_xticks(people)
+
+            # Добавление критериев приемлемости
+            n_max = max(people) * 1.5  # Расширяем диапазон для лучшей видимости
+            self._add_fn_criteria(ax, n_max)
+
+            # Настройка графика
+            ax.grid(True)
+            ax.set_xlabel('Количество погибших, чел')
+            ax.set_ylabel('Вероятность, 1/год')
+            ax.set_title('F/N - диаграмма с критериями приемлемости риска')
+            ax.legend()
+
+            plt.subplots_adjust(bottom=0.15, left=0.15)
+            plt.savefig('fn_with_criteria.jpg')
+            plt.close()
 
     def fg_chart(self):
         """
-        Построение FG диаграммы
-        :return:
+        Построение FG диаграммы с критериями приемлемости
         """
         # получим данные с листа для построения диаграммы
         data = self._return_data_for_chart()[1]
@@ -108,6 +170,7 @@ class FN_FG_chart:
         else:
             sum_data = self._sum_data_for_fg(data)
             damage, probability = list(sum_data.keys()), list(sum_data.values())
+
             # для сплошных линий
             chart_line_x = []
             chart_line_y = []
@@ -116,8 +179,10 @@ class FN_FG_chart:
                     chart_line_x.extend([0, i, i, i])
                     chart_line_y.extend([probability[damage.index(i)], probability[damage.index(i)], None, None])
                 elif damage[-1] == i:
-                    chart_line_x.extend([damage[damage.index(i)-1], damage[damage.index(i)-1], i, i])
-                    chart_line_y.extend([probability[damage.index(i)], probability[damage.index(i)], probability[damage.index(i)], probability[damage.index(i)]])
+                    chart_line_x.extend([damage[damage.index(i) - 1], damage[damage.index(i) - 1], i, i])
+                    chart_line_y.extend(
+                        [probability[damage.index(i)], probability[damage.index(i)], probability[damage.index(i)],
+                         probability[damage.index(i)]])
                     break
                 else:
                     chart_line_x.extend([damage[damage.index(i) - 1], i, i, i])
@@ -136,23 +201,53 @@ class FN_FG_chart:
                 chart_dot_line_x.extend([i, i])
                 chart_dot_line_y.extend([probability[damage.index(i)], probability[damage.index(i) + 1]])
 
-            # Отрисовка графика
-            fig = plt.figure()
-            plt.semilogy(chart_line_x, chart_line_y, color='r', linestyle='-', marker='.')
-            plt.semilogy(chart_dot_line_x, chart_dot_line_y, color='r', linestyle='--', marker='.')
-            # plt.xticks(ticks=damage)
-            plt.title('F/G - диаграмма')
-            plt.xlabel('Ущерб, млн.руб')
-            plt.ylabel('Вероятность, 1/год')
-            plt.subplots_adjust(bottom=0.15, left=0.15)  # Добавляем пространство снизу и слева
-            plt.grid(True)
+            # Создание графика
+            fig, ax = plt.subplots(figsize=(10, 8))
 
-            # plt.show()
-            plt.savefig(f'fg.jpg')
+            # Построение основной диаграммы
+            ax.semilogy(chart_line_x, chart_line_y, color='r', linestyle='-', marker='.')
+            ax.semilogy(chart_dot_line_x, chart_dot_line_y, color='r', linestyle='--', marker='.')
+
+            # Добавление критериев приемлемости
+            g_max = max(damage) * 1.5  # Расширяем диапазон для лучшей видимости
+            self._add_fg_criteria(ax, g_max)
+
+            # Настройка графика
+            ax.grid(True)
+            ax.set_xlabel('Ущерб, млн.руб')
+            ax.set_ylabel('Вероятность, 1/год')
+            ax.set_title('F/G - диаграмма с критериями приемлемости риска')
+            ax.legend()
+
+            plt.subplots_adjust(bottom=0.15, left=0.15)
+            plt.savefig('fg_with_criteria.jpg')
+            plt.close()
 
 
-# if __name__ == '__main__':
-#
-#     chart = FN_FG_chart(data=data)
-#     # chart.fn_chart()
-#     # chart.fg_chart()
+if __name__ == '__main__':
+    # Примерные данные для тестирования
+    # Формат: [вероятность, число_пострадавших, материальный_ущерб]
+    test_data = [
+        [1e-3, 1, 0.5],  # Высокая вероятность, малые последствия
+        [5e-4, 2, 1.0],
+        [1e-4, 3, 2.0],
+        [5e-5, 4, 5.0],
+        [1e-5, 6, 10.0],
+        [5e-6, 8, 15.0],
+        [1e-6, 10, 20.0],  # Низкая вероятность, серьезные последствия
+        [5e-7, 15, 30.0],
+        [1e-7, 20, 50.0],
+    ]
+
+    # Создание экземпляра класса и построение диаграмм
+    chart = FN_FG_chart(test_data)
+
+    # Построение FN диаграммы
+    print("Построение FN диаграммы...")
+    chart.fn_chart()
+    print("FN диаграмма сохранена в файл 'fn_with_criteria.jpg'")
+
+    # Построение FG диаграммы
+    print("Построение FG диаграммы...")
+    chart.fg_chart()
+    print("FG диаграмма сохранена в файл 'fg_with_criteria.jpg'")
