@@ -541,132 +541,132 @@ if __name__ == '__main__':
     # Инициализация базы данных
     db = SubstanceDatabase("substances.db")
 
-    print("1. Добавление веществ")
-    # Бензин АИ-92
-    benzine = {
-        "sub_name": "Бензин АИ-92",
-        "density_liquid": 750.0,
-        "molecular_weight": 0.095,
-        "boiling_temperature_liquid": 35.0,
-        "heat_evaporation_liquid": 372000.0,
-        "adiabatic": 1.1,
-        "heat_capacity_liquid": 2100.0,
-        "class_substance": 4,
-        "heat_of_combustion": 43600.0,
-        "sigma": 4,
-        "energy_level": 2,
-        "flash_point": -27.0,
-        "auto_ignition_temp": 255.0,
-        "lower_concentration_limit": 0.76,
-        "upper_concentration_limit": 8.0,
-        "threshold_toxic_dose": None,
-        "lethal_toxic_dose": None,
-        "sub_type": 0  # ЛВЖ
-    }
-    benzine_id = db.create_substance(benzine)
-    print(f"Создан бензин с ID: {benzine_id}")
-
-    # Дизельное топливо
-    diesel = {
-        "sub_name": "Дизельное топливо",
-        "density_liquid": 840.0,
-        "molecular_weight": 0.172,
-        "boiling_temperature_liquid": 180.0,
-        "heat_evaporation_liquid": 210000.0,
-        "adiabatic": 1.1,
-        "heat_capacity_liquid": 1850.0,
-        "class_substance": 4,
-        "heat_of_combustion": 43600.0,
-        "sigma": 4,
-        "energy_level": 2,
-        "flash_point": 35.0,
-        "auto_ignition_temp": 210.0,
-        "lower_concentration_limit": 0.52,
-        "upper_concentration_limit": 4.0,
-        "threshold_toxic_dose": None,
-        "lethal_toxic_dose": None,
-        "sub_type": 4  # ГЖ
-    }
-    diesel_id = db.create_substance(diesel)
-    print(f"Создано дизельное топливо с ID: {diesel_id}")
-
-    # Окись этилена
-    ethylene_oxide = {
-        "sub_name": "Окись этилена",
-        "density_liquid": 882.0,
-        "molecular_weight": 0.044,
-        "boiling_temperature_liquid": 10.7,
-        "heat_evaporation_liquid": 578000.0,
-        "adiabatic": 1.2,
-        "heat_capacity_liquid": 1930.0,
-        "class_substance": 2,
-        "heat_of_combustion": 29000.0,
-        "sigma": 4,
-        "energy_level": 1,
-        "flash_point": -18.0,
-        "auto_ignition_temp": 429.0,
-        "lower_concentration_limit": 2.3,
-        "upper_concentration_limit": 100.0,
-        "threshold_toxic_dose": 2.2,
-        "lethal_toxic_dose": 4.4,
-        "sub_type": 1  # ЛВЖ токсичная
-    }
-    ethylene_id = db.create_substance(ethylene_oxide)
-    print(f"Создана окись этилена с ID: {ethylene_id}")
-
-    print("\n2. Получение свойств по ID")
-    substance = db.get_substance(diesel_id)
-    print("Свойства дизельного топлива:")
-    pprint(substance)
-
-    print("\n3. Получение списка всех веществ")
-    substances = db.get_substances()
-    print(f"Всего веществ в базе: {len(substances)}")
-    for substance in substances:
-        print(f"- {substance['sub_name']}")
-
-    print("\n4. Обновление данных о веществе (изменение на ДТ зимнее)")
-    winter_diesel = substance.copy()
-    winter_diesel.update({
-        "sub_name": "ДТ зимнее",
-        "density_liquid": 820.0,
-        "flash_point": 30.0,
-        "auto_ignition_temp": 220.0
-    })
-    success = db.update_substance(diesel_id, winter_diesel)
-    print(f"Обновление {'успешно' if success else 'не удалось'}")
-
-    print("\n5. Удаление вещества с ID=1")
-    success = db.delete_substance(1)
-    print(f"Удаление {'успешно' if success else 'не удалось'}")
-
-    print("\n6. Поиск вещества 'бензин'")
-    found = db.search_substances(name='бензин')
-    print("Найдены вещества:")
-    for substance in found:
-        print(f"- {substance['sub_name']}")
-
-    print("\n7. Экспорт данных")
+    # print("1. Добавление веществ")
+    # # Бензин АИ-92
+    # benzine = {
+    #     "sub_name": "Бензин АИ-92",
+    #     "density_liquid": 750.0,
+    #     "molecular_weight": 0.095,
+    #     "boiling_temperature_liquid": 35.0,
+    #     "heat_evaporation_liquid": 372000.0,
+    #     "adiabatic": 1.1,
+    #     "heat_capacity_liquid": 2100.0,
+    #     "class_substance": 4,
+    #     "heat_of_combustion": 43600.0,
+    #     "sigma": 4,
+    #     "energy_level": 2,
+    #     "flash_point": -27.0,
+    #     "auto_ignition_temp": 255.0,
+    #     "lower_concentration_limit": 0.76,
+    #     "upper_concentration_limit": 8.0,
+    #     "threshold_toxic_dose": None,
+    #     "lethal_toxic_dose": None,
+    #     "sub_type": 0  # ЛВЖ
+    # }
+    # benzine_id = db.create_substance(benzine)
+    # print(f"Создан бензин с ID: {benzine_id}")
+    #
+    # # Дизельное топливо
+    # diesel = {
+    #     "sub_name": "Дизельное топливо",
+    #     "density_liquid": 840.0,
+    #     "molecular_weight": 0.172,
+    #     "boiling_temperature_liquid": 180.0,
+    #     "heat_evaporation_liquid": 210000.0,
+    #     "adiabatic": 1.1,
+    #     "heat_capacity_liquid": 1850.0,
+    #     "class_substance": 4,
+    #     "heat_of_combustion": 43600.0,
+    #     "sigma": 4,
+    #     "energy_level": 2,
+    #     "flash_point": 35.0,
+    #     "auto_ignition_temp": 210.0,
+    #     "lower_concentration_limit": 0.52,
+    #     "upper_concentration_limit": 4.0,
+    #     "threshold_toxic_dose": None,
+    #     "lethal_toxic_dose": None,
+    #     "sub_type": 4  # ГЖ
+    # }
+    # diesel_id = db.create_substance(diesel)
+    # print(f"Создано дизельное топливо с ID: {diesel_id}")
+    #
+    # # Окись этилена
+    # ethylene_oxide = {
+    #     "sub_name": "Окись этилена",
+    #     "density_liquid": 882.0,
+    #     "molecular_weight": 0.044,
+    #     "boiling_temperature_liquid": 10.7,
+    #     "heat_evaporation_liquid": 578000.0,
+    #     "adiabatic": 1.2,
+    #     "heat_capacity_liquid": 1930.0,
+    #     "class_substance": 2,
+    #     "heat_of_combustion": 29000.0,
+    #     "sigma": 4,
+    #     "energy_level": 1,
+    #     "flash_point": -18.0,
+    #     "auto_ignition_temp": 429.0,
+    #     "lower_concentration_limit": 2.3,
+    #     "upper_concentration_limit": 100.0,
+    #     "threshold_toxic_dose": 2.2,
+    #     "lethal_toxic_dose": 4.4,
+    #     "sub_type": 1  # ЛВЖ токсичная
+    # }
+    # ethylene_id = db.create_substance(ethylene_oxide)
+    # print(f"Создана окись этилена с ID: {ethylene_id}")
+    #
+    # print("\n2. Получение свойств по ID")
+    # substance = db.get_substance(diesel_id)
+    # print("Свойства дизельного топлива:")
+    # pprint(substance)
+    #
+    # print("\n3. Получение списка всех веществ")
+    # substances = db.get_substances()
+    # print(f"Всего веществ в базе: {len(substances)}")
+    # for substance in substances:
+    #     print(f"- {substance['sub_name']}")
+    #
+    # print("\n4. Обновление данных о веществе (изменение на ДТ зимнее)")
+    # winter_diesel = substance.copy()
+    # winter_diesel.update({
+    #     "sub_name": "ДТ зимнее",
+    #     "density_liquid": 820.0,
+    #     "flash_point": 30.0,
+    #     "auto_ignition_temp": 220.0
+    # })
+    # success = db.update_substance(diesel_id, winter_diesel)
+    # print(f"Обновление {'успешно' if success else 'не удалось'}")
+    #
+    # print("\n5. Удаление вещества с ID=1")
+    # success = db.delete_substance(1)
+    # print(f"Удаление {'успешно' if success else 'не удалось'}")
+    #
+    # print("\n6. Поиск вещества 'бензин'")
+    # found = db.search_substances(name='бензин')
+    # print("Найдены вещества:")
+    # for substance in found:
+    #     print(f"- {substance['sub_name']}")
+    #
+    # print("\n7. Экспорт данных")
     db.export_to_json("substances_backup.json")
-    db.export_to_excel("substances_backup.xlsx")
-    db.export_to_csv("substances_backup.csv")
-    print("Данные экспортированы")
+    # db.export_to_excel("substances_backup.xlsx")
+    # db.export_to_csv("substances_backup.csv")
+    # print("Данные экспортированы")
 
-    print("\n8. Удаление всех веществ и импорт из JSON")
-    # Удаляем все записи путем пересоздания таблицы
-    with db._get_connection() as conn:
-        conn.execute("DROP TABLE substances")
-    db._initialize_database()
+    # print("\n8. Удаление всех веществ и импорт из JSON")
+    # # Удаляем все записи путем пересоздания таблицы
+    # with db._get_connection() as conn:
+    #     conn.execute("DROP TABLE substances")
+    # db._initialize_database()
+    #
+    # success, errors = db.import_from_json("substances_backup.json")
+    # print(f"Импорт из JSON: успешно - {success}, ошибок - {errors}")
 
-    success, errors = db.import_from_json("substances_backup.json")
-    print(f"Импорт из JSON: успешно - {success}, ошибок - {errors}")
-
-    print("\n9. Удаление всех веществ и импорт из Excel")
-    with db._get_connection() as conn:
-        conn.execute("DROP TABLE substances")
-    db._initialize_database()
-
-    success, errors = db.import_from_excel("substances_backup.xlsx")
-    print(f"Импорт из Excel: успешно - {success}, ошибок - {errors}")
+    # print("\n9. Удаление всех веществ и импорт из Excel")
+    # with db._get_connection() as conn:
+    #     conn.execute("DROP TABLE substances")
+    # db._initialize_database()
+    #
+    # success, errors = db.import_from_excel("substances_backup.xlsx")
+    # print(f"Импорт из Excel: успешно - {success}, ошибок - {errors}")
 
     print("\nГотово!")
